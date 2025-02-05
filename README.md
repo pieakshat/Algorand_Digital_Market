@@ -4,6 +4,9 @@ This starter full stack project has been generated using AlgoKit. See below for 
 
 ## Setup
 
+## Models Link
+[LINK](https://colab.research.google.com/drive/14FhfjYsM-wf1IJllxfqTctxVjmAgYoib?usp=sharing)
+
 ### Initial setup
 1. Clone this repository to your local machine.
 2. Ensure [Docker](https://www.docker.com/) is installed and operational. Then, install `AlgoKit` following this [guide](https://github.com/algorandfoundation/algokit-cli#install).

@@ -1,0 +1,14 @@
+name: Pull Request validation
+
+on: [pull_request]
+
+
+jobs:
+  rchain-contracts-ci:
+    name: Run rchain-contracts validation
+    uses: ./.github/workflows/rchain-contracts-ci.yaml
+
+  rchain-frontend-ci:
+    name: Run rchain-frontend validation
+    uses: ./.github/workflows/rchain-frontend-ci.yaml
+

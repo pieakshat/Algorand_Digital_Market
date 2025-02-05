@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@react-google-maps/api": "^2.20.5",
+    "axios": "^1.7.9",
+    "firebase": "^11.2.0",
+    "framer-motion": "^12.1.0",
+    "react-icons": "^5.4.0",
+    "react-router-dom": "^7.1.5"
+  },
+  "devDependencies": {
+    "@types/firebase": "^2.4.32",
+    "@types/react-icons": "^2.2.7",
+    "@types/react-router-dom": "^5.3.3",
+    "recharts": "^2.15.1"
+  }
+}

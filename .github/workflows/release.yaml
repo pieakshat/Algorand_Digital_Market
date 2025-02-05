@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.vscode/**'
+      - '.idea/**'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  rchain-contracts-validate:
+    name: Run rchain-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/rchain-contracts-ci.yaml
+
+  rchain-contracts-release:
+    name: Run rchain-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/rchain-contracts-cd.yaml
+    needs: rchain-contracts-validate
+
+  rchain-frontend-validate:
+    name: Run rchain-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/rchain-frontend-ci.yaml
+
+  rchain-frontend-release:
+    name: Run rchain-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/rchain-frontend-cd.yaml
+    needs: rchain-frontend-validate

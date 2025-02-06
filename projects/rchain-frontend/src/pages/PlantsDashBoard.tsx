@@ -10,7 +10,7 @@ const PlantDashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [buttonStatus, setButtonStatus] = useState('Connect Wallet');
 
-  
+
 
   const handleConnect = () => {
     setIsConnected(true);
@@ -36,7 +36,7 @@ const PlantDashboard = () => {
       {/* Sidebar */}
       <div className="w-64 bg-green-600 text-white flex flex-col">
         <div className="p-6 flex items-center gap-4">
-            <FaLeaf className="text-3xl" />
+          <FaLeaf className="text-3xl" />
           <h2 className="text-xl font-bold">EcoPlant Dashboard</h2>
         </div>
         <div className="flex-1">
@@ -58,7 +58,7 @@ const PlantDashboard = () => {
                 className={`p-4 cursor-pointer ${activeTab === 'report' ? 'bg-green-700' : ''}`}
                 onClick={() => setActiveTab('report')}
               >
-                Report Progress 
+                Report Progress
               </li>
             </ul>
           </nav>

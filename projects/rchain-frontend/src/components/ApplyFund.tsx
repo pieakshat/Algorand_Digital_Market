@@ -71,7 +71,7 @@ const ApplyFund: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/plants/${plantId}`)
+      const response = await fetch(`http://localhost:5500/plants/${plantId}`)
       if (!response.ok) {
         throw new Error(`Error fetching plant data: ${response.statusText}`)
       }
@@ -91,7 +91,7 @@ const ApplyFund: React.FC = () => {
   const fetchAreaType = async (location: string): Promise<string> => {
     try {
       console.log()
-      const response = await fetch('http://localhost:5000/area-type', {
+      const response = await fetch('http://localhost:5500/area-type', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -178,23 +178,23 @@ const ApplyFund: React.FC = () => {
 
   const recyclabilityScoreData = estimationResult
     ? estimationResult.plastics.map((plastic, index) => ({
-        name: plastic,
-        score: estimationResult.scores[index],
-      }))
+      name: plastic,
+      score: estimationResult.scores[index],
+    }))
     : []
 
   const recyclingCostData = estimationResult
     ? estimationResult.plastics_1.map((plastic, index) => ({
-        name: plastic,
-        cost: estimationResult.costs_1[index],
-      }))
+      name: plastic,
+      cost: estimationResult.costs_1[index],
+    }))
     : []
 
   const fundAllocationData = estimationResult
     ? estimationResult.categories.map((category, index) => ({
-        name: category,
-        allocation: estimationResult.allocations[index],
-      }))
+      name: category,
+      allocation: estimationResult.allocations[index],
+    }))
     : []
 
   return (

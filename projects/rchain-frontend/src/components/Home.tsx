@@ -76,7 +76,7 @@ const Home: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/plants/${plantId}`)
+        const response = await fetch(`http://localhost:5500/plants/${plantId}`)
         if (!response.ok) {
           throw new Error(`Error fetching plant data: ${response.statusText}`)
         }

@@ -1,0 +1,625 @@
+#pragma version 10
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 4 100
+    bytecblock "Bronze_id" "Silver_id" "Gold_id" "last_distribution_time" "total_amount_left" "usdt_asset_id" "recipient_funding_left" "distribution_percentage" "distribution_interval"
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@9
+    pushbytess 0x84747fc7 0x1574535a 0x93b0b60d 0xedce12d6 // method "initialise(asset,uint64,uint64,account,asset,asset,asset,uint64)void", method "opt_in_to_asset(pay)void", method "buyAndMint(uint64,pay)void", method "AllocateFunds(account)void"
+    txna ApplicationArgs 0
+    match main_initialise_route@3 main_opt_in_to_asset_route@4 main_buyAndMint_route@5 main_AllocateFunds_route@6
+
+main_after_if_else@13:
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    intc_0 // 0
+    return
+
+main_AllocateFunds_route@6:
+    // smart_contracts/rchain/contract.py:126
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // smart_contracts/rchain/contract.py:126
+    // @abimethod()
+    callsub AllocateFunds
+    intc_1 // 1
+    return
+
+main_buyAndMint_route@5:
+    // smart_contracts/rchain/contract.py:99
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/rchain/contract.py:99
+    // @abimethod()
+    callsub buyAndMint
+    intc_1 // 1
+    return
+
+main_opt_in_to_asset_route@4:
+    // smart_contracts/rchain/contract.py:54
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/rchain/contract.py:54
+    // @abimethod()
+    callsub opt_in_to_asset
+    intc_1 // 1
+    return
+
+main_initialise_route@3:
+    // smart_contracts/rchain/contract.py:41
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 5
+    btoi
+    txnas Assets
+    txna ApplicationArgs 6
+    btoi
+    txnas Assets
+    txna ApplicationArgs 7
+    btoi
+    txnas Assets
+    txna ApplicationArgs 8
+    btoi
+    // smart_contracts/rchain/contract.py:41
+    // @abimethod()
+    callsub initialise
+    intc_1 // 1
+    return
+
+main_bare_routing@9:
+    // smart_contracts/rchain/contract.py:13
+    // class Rchain(ARC4Contract):
+    txn OnCompletion
+    bnz main_after_if_else@13
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    intc_1 // 1
+    return
+
+
+// smart_contracts.rchain.contract.Rchain.initialise(usdt_id: uint64, distribution_interval: uint64, total_amount_to_raise: uint64, Recipient: bytes, bronze_id: uint64, silver_id: uint64, gold_id: uint64, Recipient_funding_left: uint64) -> void:
+initialise:
+    // smart_contracts/rchain/contract.py:41-42
+    // @abimethod()
+    // def initialise(self, usdt_id: Asset, distribution_interval: UInt64, total_amount_to_raise: UInt64, Recipient: Account, bronze_id: Asset, silver_id: Asset, gold_id: Asset, Recipient_funding_left: UInt64) -> None:
+    proto 8 0
+    // smart_contracts/rchain/contract.py:43
+    // self.distribution_percentage = UInt64(70)
+    bytec 7 // "distribution_percentage"
+    pushint 70 // 70
+    app_global_put
+    // smart_contracts/rchain/contract.py:44
+    // self.last_distribution_time = Global.latest_timestamp
+    bytec_3 // "last_distribution_time"
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/rchain/contract.py:45
+    // self.total_amount_left = total_amount_to_raise
+    bytec 4 // "total_amount_left"
+    frame_dig -6
+    app_global_put
+    // smart_contracts/rchain/contract.py:46
+    // self.distribution_interval = distribution_interval
+    bytec 8 // "distribution_interval"
+    frame_dig -7
+    app_global_put
+    // smart_contracts/rchain/contract.py:47
+    // self.recipient = Recipient
+    pushbytes "recipient"
+    frame_dig -5
+    app_global_put
+    // smart_contracts/rchain/contract.py:48
+    // self.usdt_asset_id = usdt_id
+    bytec 5 // "usdt_asset_id"
+    frame_dig -8
+    app_global_put
+    // smart_contracts/rchain/contract.py:49
+    // self.Bronze_id = bronze_id
+    bytec_0 // "Bronze_id"
+    frame_dig -4
+    app_global_put
+    // smart_contracts/rchain/contract.py:50
+    // self.Silver_id = silver_id
+    bytec_1 // "Silver_id"
+    frame_dig -3
+    app_global_put
+    // smart_contracts/rchain/contract.py:51
+    // self.Gold_id = gold_id
+    bytec_2 // "Gold_id"
+    frame_dig -2
+    app_global_put
+    // smart_contracts/rchain/contract.py:52
+    // self.recipient_funding_left = Recipient_funding_left
+    bytec 6 // "recipient_funding_left"
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.rchain.contract.Rchain.opt_in_to_asset(mbrpay: uint64) -> void:
+opt_in_to_asset:
+    // smart_contracts/rchain/contract.py:54-55
+    // @abimethod()
+    // def opt_in_to_asset(self, mbrpay: gtxn.PaymentTransaction) -> None:
+    proto 1 0
+    // smart_contracts/rchain/contract.py:56
+    // assert Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    assert
+    // smart_contracts/rchain/contract.py:63
+    // assert mbrpay.receiver == Global.current_application_address
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/rchain/contract.py:65-71
+    // # assert mbrpay.amount == Global.min_balance + Global.asset_opt_in_min_balance*UInt64(3)
+    // itxn.AssetConfig(
+    //     total= 100,
+    //     unit_name= "Tex",
+    //     asset_name="Demo",
+    //     decimals=0
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:70
+    // decimals=0
+    intc_0 // 0
+    itxn_field ConfigAssetDecimals
+    // smart_contracts/rchain/contract.py:69
+    // asset_name="Demo",
+    pushbytes "Demo"
+    itxn_field ConfigAssetName
+    // smart_contracts/rchain/contract.py:68
+    // unit_name= "Tex",
+    pushbytes "Tex"
+    itxn_field ConfigAssetUnitName
+    // smart_contracts/rchain/contract.py:67
+    // total= 100,
+    intc_3 // 100
+    itxn_field ConfigAssetTotal
+    // smart_contracts/rchain/contract.py:65-66
+    // # assert mbrpay.amount == Global.min_balance + Global.asset_opt_in_min_balance*UInt64(3)
+    // itxn.AssetConfig(
+    pushint 3 // acfg
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:65-71
+    // # assert mbrpay.amount == Global.min_balance + Global.asset_opt_in_min_balance*UInt64(3)
+    // itxn.AssetConfig(
+    //     total= 100,
+    //     unit_name= "Tex",
+    //     asset_name="Demo",
+    //     decimals=0
+    // ).submit()
+    itxn_submit
+    // smart_contracts/rchain/contract.py:75-80
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Bronze_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:76
+    // xfer_asset= self.Bronze_id,
+    intc_0 // 0
+    bytec_0 // "Bronze_id"
+    app_global_get_ex
+    assert // check self.Bronze_id exists
+    // smart_contracts/rchain/contract.py:77
+    // asset_receiver= Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/rchain/contract.py:79
+    // asset_sender= Txn.sender
+    txn Sender
+    itxn_field AssetSender
+    // smart_contracts/rchain/contract.py:78
+    // asset_amount= 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/rchain/contract.py:75
+    // itxn.AssetTransfer(
+    intc_2 // axfer
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:75-80
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Bronze_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_submit
+    // smart_contracts/rchain/contract.py:82-87
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Silver_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:83
+    // xfer_asset= self.Silver_id,
+    intc_0 // 0
+    bytec_1 // "Silver_id"
+    app_global_get_ex
+    assert // check self.Silver_id exists
+    // smart_contracts/rchain/contract.py:84
+    // asset_receiver= Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/rchain/contract.py:86
+    // asset_sender= Txn.sender
+    txn Sender
+    itxn_field AssetSender
+    // smart_contracts/rchain/contract.py:85
+    // asset_amount= 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/rchain/contract.py:82
+    // itxn.AssetTransfer(
+    intc_2 // axfer
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:82-87
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Silver_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_submit
+    // smart_contracts/rchain/contract.py:89-94
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Gold_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:90
+    // xfer_asset= self.Gold_id,
+    intc_0 // 0
+    bytec_2 // "Gold_id"
+    app_global_get_ex
+    assert // check self.Gold_id exists
+    // smart_contracts/rchain/contract.py:91
+    // asset_receiver= Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/rchain/contract.py:93
+    // asset_sender= Txn.sender
+    txn Sender
+    itxn_field AssetSender
+    // smart_contracts/rchain/contract.py:92
+    // asset_amount= 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/rchain/contract.py:89
+    // itxn.AssetTransfer(
+    intc_2 // axfer
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:89-94
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.Gold_id,
+    //     asset_receiver= Global.current_application_address,
+    //     asset_amount= 0,
+    //     asset_sender= Txn.sender
+    // ).submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts.rchain.contract.Rchain.buyAndMint(amount_sent: uint64, payment: uint64) -> void:
+buyAndMint:
+    // smart_contracts/rchain/contract.py:99-100
+    // @abimethod()
+    // def buyAndMint(self, amount_sent: UInt64, payment: gtxn.PaymentTransaction) -> None:      # mints an sbt after the transaction is done
+    proto 2 0
+    // smart_contracts/rchain/contract.py:101
+    // assert payment.sender == Txn.sender
+    frame_dig -1
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/rchain/contract.py:102
+    // assert payment.receiver == Global.current_application_address, "not sent to this address"
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert // not sent to this address
+    // smart_contracts/rchain/contract.py:103
+    // assert payment.amount == amount_sent, "amount sent is not correct"
+    frame_dig -1
+    gtxns Amount
+    dupn 2
+    frame_dig -2
+    ==
+    assert // amount sent is not correct
+    // smart_contracts/rchain/contract.py:104
+    // assert payment.amount >= 200, "Minimum amount to send is 200USD"
+    dup
+    pushint 200 // 200
+    >=
+    assert // Minimum amount to send is 200USD
+    // smart_contracts/rchain/contract.py:106
+    // if payment.amount < UInt64(1_000_000):
+    pushint 1000000 // 1000000
+    <
+    bz buyAndMint_else_body@2
+    // smart_contracts/rchain/contract.py:107
+    // assert self.Bronze_id.balance(Global.caller_application_address), "Out of bronze SBTs"
+    global CallerApplicationAddress
+    intc_0 // 0
+    bytec_0 // "Bronze_id"
+    app_global_get_ex
+    assert // check self.Bronze_id exists
+    asset_holding_get AssetBalance
+    assert // account opted into asset
+    assert // Out of bronze SBTs
+    // smart_contracts/rchain/contract.py:108
+    // assetToTransfer = self.Bronze_id
+    intc_0 // 0
+    bytec_0 // "Bronze_id"
+    app_global_get_ex
+    assert // check self.Bronze_id exists
+
+buyAndMint_after_if_else@6:
+    // smart_contracts/rchain/contract.py:116-121
+    // # should mint the asset[nft]  to the sender's address will figure this out later
+    // itxn.AssetTransfer(
+    //     xfer_asset= assetToTransfer,     # id of the nft
+    //     asset_receiver= Txn.sender,
+    //     asset_amount= 1,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:119
+    // asset_receiver= Txn.sender,
+    txn Sender
+    // smart_contracts/rchain/contract.py:120
+    // asset_amount= 1,
+    intc_1 // 1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/rchain/contract.py:116-117
+    // # should mint the asset[nft]  to the sender's address will figure this out later
+    // itxn.AssetTransfer(
+    intc_2 // axfer
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:116-121
+    // # should mint the asset[nft]  to the sender's address will figure this out later
+    // itxn.AssetTransfer(
+    //     xfer_asset= assetToTransfer,     # id of the nft
+    //     asset_receiver= Txn.sender,
+    //     asset_amount= 1,
+    // ).submit()
+    itxn_submit
+    retsub
+
+buyAndMint_else_body@2:
+    // smart_contracts/rchain/contract.py:109
+    // elif payment.amount < UInt64(3_000_000):
+    frame_dig 0
+    pushint 3000000 // 3000000
+    <
+    bz buyAndMint_else_body@4
+    // smart_contracts/rchain/contract.py:110
+    // assert self.Silver_id.balance(Global.caller_application_address), "Out of Silver SBTs"
+    global CallerApplicationAddress
+    intc_0 // 0
+    bytec_1 // "Silver_id"
+    app_global_get_ex
+    assert // check self.Silver_id exists
+    asset_holding_get AssetBalance
+    assert // account opted into asset
+    assert // Out of Silver SBTs
+    // smart_contracts/rchain/contract.py:111
+    // assetToTransfer = self.Silver_id
+    intc_0 // 0
+    bytec_1 // "Silver_id"
+    app_global_get_ex
+    assert // check self.Silver_id exists
+    b buyAndMint_after_if_else@6
+
+buyAndMint_else_body@4:
+    // smart_contracts/rchain/contract.py:113
+    // assert self.Gold_id.balance(Global.caller_application_address)  > 0, "Out of gold SBTs"
+    global CallerApplicationAddress
+    intc_0 // 0
+    bytec_2 // "Gold_id"
+    app_global_get_ex
+    assert // check self.Gold_id exists
+    asset_holding_get AssetBalance
+    assert // account opted into asset
+    assert // Out of gold SBTs
+    // smart_contracts/rchain/contract.py:114
+    // assetToTransfer = self.Gold_id
+    intc_0 // 0
+    bytec_2 // "Gold_id"
+    app_global_get_ex
+    assert // check self.Gold_id exists
+    b buyAndMint_after_if_else@6
+
+
+// smart_contracts.rchain.contract.Rchain.AllocateFunds(recipient: bytes) -> void:
+AllocateFunds:
+    // smart_contracts/rchain/contract.py:126-127
+    // @abimethod()
+    // def AllocateFunds(self, recipient: Account) -> None:
+    proto 1 0
+    // smart_contracts/rchain/contract.py:128
+    // assert (Global.latest_timestamp >= self.last_distribution_time + self.distribution_interval), "distribution interval not reached"
+    global LatestTimestamp
+    intc_0 // 0
+    bytec_3 // "last_distribution_time"
+    app_global_get_ex
+    assert // check self.last_distribution_time exists
+    intc_0 // 0
+    bytec 8 // "distribution_interval"
+    app_global_get_ex
+    assert // check self.distribution_interval exists
+    +
+    >=
+    assert // distribution interval not reached
+    // smart_contracts/rchain/contract.py:131-132
+    // # poolBalance = Global.current_application_address.
+    // poolBalance = self.usdt_asset_id.balance(Global.caller_application_address) # check the usdt balance of the pool
+    global CallerApplicationAddress
+    intc_0 // 0
+    bytec 5 // "usdt_asset_id"
+    app_global_get_ex
+    assert // check self.usdt_asset_id exists
+    asset_holding_get AssetBalance
+    assert // account opted into asset
+    // smart_contracts/rchain/contract.py:133
+    // assert poolBalance > 0
+    dup
+    assert
+    // smart_contracts/rchain/contract.py:135
+    // distribution_amount: UInt64 = (poolBalance * self.distribution_percentage) // 100
+    intc_0 // 0
+    bytec 7 // "distribution_percentage"
+    app_global_get_ex
+    assert // check self.distribution_percentage exists
+    *
+    intc_3 // 100
+    /
+    // smart_contracts/rchain/contract.py:138-143
+    // # recipient_share = (distribution_amount * self.recipient_funding_left) // self.total_amount_left
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.usdt_asset_id,
+    //     asset_receiver= recipient,
+    //     asset_amount= distribution_amount,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/rchain/contract.py:140
+    // xfer_asset= self.usdt_asset_id,
+    intc_0 // 0
+    bytec 5 // "usdt_asset_id"
+    app_global_get_ex
+    assert // check self.usdt_asset_id exists
+    dig 1
+    itxn_field AssetAmount
+    frame_dig -1
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/rchain/contract.py:138-139
+    // # recipient_share = (distribution_amount * self.recipient_funding_left) // self.total_amount_left
+    // itxn.AssetTransfer(
+    intc_2 // axfer
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/rchain/contract.py:138-143
+    // # recipient_share = (distribution_amount * self.recipient_funding_left) // self.total_amount_left
+    // itxn.AssetTransfer(
+    //     xfer_asset= self.usdt_asset_id,
+    //     asset_receiver= recipient,
+    //     asset_amount= distribution_amount,
+    // ).submit()
+    itxn_submit
+    // smart_contracts/rchain/contract.py:144
+    // self.recipient_funding_left -= distribution_amount
+    intc_0 // 0
+    bytec 6 // "recipient_funding_left"
+    app_global_get_ex
+    assert // check self.recipient_funding_left exists
+    dig 1
+    -
+    bytec 6 // "recipient_funding_left"
+    swap
+    app_global_put
+    // smart_contracts/rchain/contract.py:146
+    // self.last_distribution_time = Global.latest_timestamp
+    bytec_3 // "last_distribution_time"
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/rchain/contract.py:147
+    // self.total_amount_left -= distribution_amount
+    intc_0 // 0
+    bytec 4 // "total_amount_left"
+    app_global_get_ex
+    assert // check self.total_amount_left exists
+    swap
+    -
+    bytec 4 // "total_amount_left"
+    swap
+    app_global_put
+    retsub

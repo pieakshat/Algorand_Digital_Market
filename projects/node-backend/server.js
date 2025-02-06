@@ -6,7 +6,7 @@ const Groq = require('groq-sdk');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
-const PORT = 5000;
+const PORT = 5500;
 
 // Middleware
 app.use(bodyParser.json());
@@ -33,7 +33,7 @@ const fetchAreaType = async (location) => {
 app.post("/area-type", async (req, res) => {
   const { location } = req.body;
 
-  
+
 
   // Validate input
   if (!location || typeof location !== "string") {
@@ -55,49 +55,49 @@ mongoose.connect('mongodb+srv://akshat05p:kjkszpj@recyclechain.x2cps.mongodb.net
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
 // Schema and Model
 const RecyclePlantSchema = new mongoose.Schema({
-    plantName: String,
-    companyEmail: String,
-    companyValuation: Number,
-    recyclingCapacity: Number,
-    expectedRecyclingCapacity: Number,
-    plantArea: Number,
-    cityName: String,
-    stateName: String,
-    countryName: String,
-    requiredFunding: Number,
-    fundingReceived: Number,
-    walletAddress: String
-  }, { collection: 'recycle_plants' }); // Explicit collection name
+  plantName: String,
+  companyEmail: String,
+  companyValuation: Number,
+  recyclingCapacity: Number,
+  expectedRecyclingCapacity: Number,
+  plantArea: Number,
+  cityName: String,
+  stateName: String,
+  countryName: String,
+  requiredFunding: Number,
+  fundingReceived: Number,
+  walletAddress: String
+}, { collection: 'recycle_plants' }); // Explicit collection name
 
 
-  const fundSchema = new mongoose.Schema({
-    walletAddress: { type: String, required: true },
-    finalFund: { type: Number, required: true },
-    description: { type: String, required: true },
-    email : {type: String, required: true},
-    createdAt: { type: Date, default: Date.now }
-    
-  });
-  
-  const RecyclePlant = mongoose.model('recycle_plants', RecyclePlantSchema);
-  const FundApplication = mongoose.model('FundApplication', fundSchema);
+const fundSchema = new mongoose.Schema({
+  walletAddress: { type: String, required: true },
+  finalFund: { type: Number, required: true },
+  description: { type: String, required: true },
+  email: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+
+});
+
+const RecyclePlant = mongoose.model('recycle_plants', RecyclePlantSchema);
+const FundApplication = mongoose.model('FundApplication', fundSchema);
 
 
 //   app.post('/finalFund', async (req, res) => {
 //     const { walletAddress, finalFund, description, email } = req.body;
-  
+
 //     if (!walletAddress || !finalFund || !description || !email) {
 //       return res.status(400).json({
 //         status: 'error',
 //         message: 'All fields (walletAddress, finalFund, description) are required.',
 //       });
 //     }
-  
+
 //     try {
 //       // Check if the finalFund amount is reasonable (optional, based on business logic)
 //       if (finalFund <= 0) {
@@ -106,11 +106,11 @@ const RecyclePlantSchema = new mongoose.Schema({
 //           message: 'Fund amount must be greater than zero.',
 //         });
 //       }
-  
+
 //       // Save the fund application to the database
 //       const newApplication = new FundApplication({ walletAddress, finalFund, description, email });
 //       await newApplication.save();
-  
+
 //       return res.status(200).json({
 //         status: 'success',
 //         message: 'Fund application submitted successfully.',
@@ -136,13 +136,13 @@ const fundValidationSchema = Joi.object({
 
 
 app.get('/companies', async (req, res) => {
-    try {
-      const companies = await RecyclePlant.find();
-      res.json(companies);
-    } catch (error) {
-      res.status(500).send('Error fetching companies');
-    }
-  });
+  try {
+    const companies = await RecyclePlant.find();
+    res.json(companies);
+  } catch (error) {
+    res.status(500).send('Error fetching companies');
+  }
+});
 
 app.post('/finalFund', async (req, res) => {
   const { error } = fundValidationSchema.validate(req.body);
@@ -168,47 +168,47 @@ app.post('/finalFund', async (req, res) => {
 });
 
 
-  
+
 
 // API Endpoint
 app.post('/register-plant', async (req, res) => {
-    try {
-      const plant = new RecyclePlant(req.body); // Create a new document
-      await plant.save(); // Save the document to the database
-      
-  
-      // Include the plant's `_id` in the response
-      res.status(200).json({
-        message: 'Recycle Plant registered successfully!',
-        plantId: plant._id, // Send the MongoDB ObjectId
-      });
-    } catch (error) {
-      res.status(500).json({
-        error: 'Failed to register recycle plant',
-        details: error.message,
-      });
-    }
-  });
+  try {
+    const plant = new RecyclePlant(req.body); // Create a new document
+    await plant.save(); // Save the document to the database
 
-  app.get('/plants/:id', async (req, res) => {
-    try {
-      const plant = await RecyclePlant.findById(req.params.id); // Fetch by ObjectId
-      if (!plant) {
-        return res.status(404).json({ error: 'Plant not found' });
-      }
-      res.status(200).json(plant);
-    } catch (error) {
-      res.status(500).json({ error: 'Error fetching plant', details: error.message });
+
+    // Include the plant's `_id` in the response
+    res.status(200).json({
+      message: 'Recycle Plant registered successfully!',
+      plantId: plant._id, // Send the MongoDB ObjectId
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to register recycle plant',
+      details: error.message,
+    });
+  }
+});
+
+app.get('/plants/:id', async (req, res) => {
+  try {
+    const plant = await RecyclePlant.findById(req.params.id); // Fetch by ObjectId
+    if (!plant) {
+      return res.status(404).json({ error: 'Plant not found' });
     }
-  });
-  
-  app.post('/estimate-funds', async (req, res) => {
-    const { location, areaType, areaInAcres, initialCapacity, targetCapacity, recyclingDemand, recyclingCost } = req.body;
-    
-    console.log('Received Data:', req.body);  // Debugging log
-  
-    try {
-      const prompt = `You are an expert in estimating required funds for plastic recycling facilities. Use the following algorithm to calculate the fund requirement for a given facility based on provided inputs.
+    res.status(200).json(plant);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching plant', details: error.message });
+  }
+});
+
+app.post('/estimate-funds', async (req, res) => {
+  const { location, areaType, areaInAcres, initialCapacity, targetCapacity, recyclingDemand, recyclingCost } = req.body;
+
+  console.log('Received Data:', req.body);  // Debugging log
+
+  try {
+    const prompt = `You are an expert in estimating required funds for plastic recycling facilities. Use the following algorithm to calculate the fund requirement for a given facility based on provided inputs.
 
 Algorithm:
 Input Parameters:
@@ -322,32 +322,32 @@ Initial Capacity: ${initialCapacity} kg/day
 Target Capacity: ${targetCapacity} kg/day
 Recycling Cost: ${recyclingCost}/kg
 Demand: ${recyclingDemand}`;
-  
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [
-          { role: "system", content: "You are a helpful assistant. Provide only the estimated amount in dollars for the recycling facility." },
-          { role: "user", content: prompt }
-        ],
-        model: "gemma2-9b-it",
-        temperature: 0.3,
-        max_tokens: 20,  // Limit the response length to reduce unnecessary text
-      });
-  
-      let responseContent = chatCompletion.choices[0]?.message?.content.trim();
-      
-      console.log('Raw Model Response:', responseContent);  // Debugging log
-  
-      // Extract number using regex
+
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a helpful assistant. Provide only the estimated amount in dollars for the recycling facility." },
+        { role: "user", content: prompt }
+      ],
+      model: "gemma2-9b-it",
+      temperature: 0.3,
+      max_tokens: 20,  // Limit the response length to reduce unnecessary text
+    });
+
+    let responseContent = chatCompletion.choices[0]?.message?.content.trim();
+
+    console.log('Raw Model Response:', responseContent);  // Debugging log
+
+    // Extract number using regex
     //   const extractedAmount = responseContent.match(/(\d+(\.\d+)?)/);
-      const estimatedFunds = responseContent;
-  
-      res.json({ estimatedFunds });
-    } catch (error) {
-      console.error("Error generating response:", error);
-      res.status(500).json({ error: 'Failed to estimate funds' });
-    }
-  });
-  
+    const estimatedFunds = responseContent;
+
+    res.json({ estimatedFunds });
+  } catch (error) {
+    console.error("Error generating response:", error);
+    res.status(500).json({ error: 'Failed to estimate funds' });
+  }
+});
+
 
 // Start Server
 app.listen(PORT, () => {

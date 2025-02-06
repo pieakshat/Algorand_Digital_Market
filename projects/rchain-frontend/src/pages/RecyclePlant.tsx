@@ -131,7 +131,7 @@ const RecyclePlant = () => {
     console.log('Plant Registration Data:', data)
 
     try {
-      const response = await fetch('http://localhost:5000/register-plant', {
+      const response = await fetch('http://localhost:5500/register-plant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
